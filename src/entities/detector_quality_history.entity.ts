@@ -10,7 +10,6 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 import { User } from './user.entity';
 import { Run } from './run.entity';
 import { Detector } from './detector.entity';
-import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('detector_quality_history')
 export class DetectorQualityHistory {
@@ -51,10 +50,6 @@ export class DetectorQualityHistory {
     @Column({
         name: 'change_time',
         precision: 0,
-    })
-    @ApiModelProperty({
-        type: 'string',
-        format: 'date-time'
     })
     changeTime: Date;
 

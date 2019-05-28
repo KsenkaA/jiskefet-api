@@ -9,7 +9,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
 import { Run } from './run.entity';
-import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('run_eor_history')
 export class RunEorHistory {
@@ -46,10 +45,6 @@ export class RunEorHistory {
     @Column({
         name: 'change_time',
         precision: 0,
-    })
-    @ApiModelProperty({
-        type: 'string',
-        format: 'date-time'
     })
     changeTime: Date;
 

@@ -8,7 +8,7 @@
 
 import { Entity } from 'typeorm';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsDateString, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsInt, IsNumberString, IsDateString } from 'class-validator';
 import * as _ from 'lodash';
 import { RunType } from '../enums/run.runtype.enum';
 import { RunQuality } from '../enums/run.runquality.enum';
@@ -41,39 +41,31 @@ export class QueryRunDto {
 
     @ApiModelProperty({
         description: 'The maximum amount of logs in each result.',
-        default: 25,
+        default: '25',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
-    @IsNumber()
-    pageSize: number = 25;
+    @IsNumberString()
+    pageSize: string = '25';
 
     @ApiModelProperty({
         description: 'The current page, i.e. the offset in the result set based on pageSize.',
-        default: 1,
+        default: '1',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
-    @IsNumber()
-    pageNumber: number = 1;
+    @IsNumberString()
+    pageNumber: string = '1';
 
     @ApiModelProperty({
         description: 'The id of the log.',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
-    @IsNumber()
+    @IsNumberString()
     @IsOptional()
-    runNumber?: number;
+    runNumber?: string;
 
     @ApiModelProperty({
         description: 'The lower bound of the timeO2Start filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -82,8 +74,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The upper bound of the timeO2Start filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -92,8 +82,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The lower bound of the timeTrgStart filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -102,8 +90,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The upper bound of the timeTrgStart filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -112,8 +98,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The lower bound of the timeTrgEnd filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -122,8 +106,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The upper bound of the timeTrgEnd filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -132,8 +114,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The lower bound of the timeO2End filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -142,8 +122,6 @@ export class QueryRunDto {
     @ApiModelProperty({
         description: 'The upper bound of the timeO2End filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     @IsOptional()
     @IsDateString()
@@ -154,12 +132,11 @@ export class QueryRunDto {
         required: false,
     })
     @IsOptional()
-    @IsString()
+    @IsNumberString()
     activityId?: string;
 
     @ApiModelProperty({
         description: 'The type of the run.',
-        enum: _.values(RunType),
         required: false,
     })
     @IsOptional()
@@ -173,4 +150,78 @@ export class QueryRunDto {
     @IsOptional()
     @IsEnum(RunQuality, { each: true, message: 'Run quality must be a valid enum type.' })
     runQuality?: RunQuality;
+
+    // --- Not yet determined if these filters are needed. ---
+
+    // @ApiModelProperty({
+    //     description: 'The number of detectors',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // nDetectors?: number;
+
+    // @ApiModelProperty({
+    //     description: 'The number of FLPs.',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // nFlps?: number;
+
+    // @ApiModelProperty({
+    //     description: 'The number of EPNs.',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // nEpns?: number;
+
+    // @ApiModelProperty({
+    //     description: 'The number of timeframes.',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // nTimeframes?: number;
+
+    // @ApiModelProperty({
+    //     description: 'The number of sub-timeframes.',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // nSubtimeframes?: number;
+
+    // @ApiModelProperty({
+    //     description: 'The number of bytes read out.',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // bytesReadOut?: number;
+
+    // @ApiModelProperty({
+    //     description: 'The number of timeframe builder bytes.',
+    //     required: false,
+    // })
+    // @IsOptional()
+    // @IsNumberString()
+    // bytesTimeframeBuilder?: number;
+
+    // tags: Tag[];
+
+    // logs: Log[];
+
+    // epnRoleSessions: EpnRoleSession[];
+
+    // flpRoles: FlpRole[];
+
+    // detectorsInRun: DetectorsInRun[];
+
+    // detectorQualityHistories: DetectorQualityHistory[];
+
+    // runQualityHistories: RunQualityHistory[];
+
+    // runEorHistories: RunEorHistory[];
 }

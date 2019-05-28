@@ -6,7 +6,7 @@
  * copied verbatim in the file "LICENSE"
  */
 
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
@@ -21,14 +21,14 @@ import { AdditionalOptions } from '../interfaces/response_object.interface';
 
 @Injectable()
 export class LogService {
-    private readonly logRepository: Repository<Log>;
+    private readonly repository: Repository<Log>;
     private readonly runRepository: Repository<Run>;
 
     constructor(
-        @InjectRepository(Log) logRepository: Repository<Log>,
+        @InjectRepository(Log) repository: Repository<Log>,
         @InjectRepository(Run) runRepository: Repository<Run>
     ) {
-        this.logRepository = logRepository;
+        this.repository = repository;
         this.runRepository = runRepository;
     }
 
@@ -45,24 +45,23 @@ export class LogService {
                 attachment.creationTime = logEntity.creationTime;
             }
         }
-
-        if (createLogDto.run) {
-            const run = await this.runRepository.findOne(createLogDto.run);
-            if (!run) {
-                throw new HttpException(
-                    `Run with run number ${createLogDto.run} does not exist.`, HttpStatus.NOT_FOUND
-                );
+        if (createLogDto.runs) {
+            for (const runNumber of createLogDto.runs) {
+                const run = await this.runRepository.findOne(runNumber);
+                if (!run) {
+                    throw new HttpException(`Run with run number ${runNumber} does not exist.`, 404);
+                }
+                await logEntity.runs.push(run);
             }
-            await logEntity.runs.push(run);
         }
-        return await this.logRepository.save(logEntity);
+        return await this.repository.save(logEntity);
     }
 
     /**
      * Returns all Logs from the db.
      */
     async findAll(queryLogDto: QueryLogDto): Promise<{ logs: Log[], additionalInformation: AdditionalOptions }> {
-        let query = await this.logRepository.createQueryBuilder('log')
+        let query = await this.repository.createQueryBuilder('log')
             .innerJoinAndSelect('log.user', 'user')
             .where('title like :title', {
                 title: queryLogDto.searchterm ? `%${queryLogDto.searchterm}%` : '%'
@@ -117,7 +116,7 @@ export class LogService {
      * @param id unique identifier for a Log.
      */
     async findLogById(id: number): Promise<Log> {
-        return await this.logRepository
+        return await this.repository
             .createQueryBuilder('log')
             .leftJoinAndSelect('log.runs', 'runs')
             .innerJoinAndSelect('log.user', 'user')
@@ -133,16 +132,9 @@ export class LogService {
      */
     async linkRunToLog(logId: number, linkRunToLogDto: LinkRunToLogDto): Promise<void> {
         const log = await this.findLogById(logId);
-        if (!log) {
-            throw new HttpException(`Log with log number ${logId} does not exist.`, HttpStatus.NOT_FOUND);
-        }
         const run = await this.runRepository.findOne(linkRunToLogDto.runNumber);
-        if (!run) {
-            throw new HttpException(
-                `Run with run number ${linkRunToLogDto.runNumber} does not exist.`, HttpStatus.NOT_FOUND);
-        }
         log.runs = [...log.runs, run];
-        await this.logRepository.save(log);
+        await this.repository.save(log);
     }
 
     /**
@@ -153,7 +145,7 @@ export class LogService {
         userId: number,
         queryLogDto: QueryLogDto
     ): Promise<{ logs: Log[], additionalInformation: AdditionalOptions }> {
-        let query = await this.logRepository
+        let query = await this.repository
             .createQueryBuilder('log')
             .innerJoinAndSelect('log.user', 'user')
             .where('fk_user_id = :userId', { userId });

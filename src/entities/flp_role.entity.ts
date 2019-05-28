@@ -8,17 +8,16 @@
 
 import { Column, Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Run } from './run.entity';
-import { ApiModelProperty } from '@nestjs/swagger';
 
 @Entity('flp_role')
 export class FlpRole {
 
     @PrimaryColumn({
-        name: 'flp_name',
+        name: 'flp_role_name',
         type: 'char',
         length: 16
     })
-    flpName: string;
+    flpRoleName: string;
 
     @ManyToOne(
         type => Run, run => run.flpRoles,
@@ -28,58 +27,14 @@ export class FlpRole {
         }
     )
     @JoinColumn({ name: 'fk_run_number' })
-    @ApiModelProperty({
-        type: 'integer',
-        format: 'int64'
-    })
     run: Run;
 
-    @Column({
-        name: 'flp_hostname'
-    })
+    @Column({ name: 'flp_hostname' })
     flpHostname: string;
 
-    @Column({
-        name: 'n_sub_timeframes',
-        nullable: true
-    })
-    @ApiModelProperty({
-        type: 'integer',
-        format: 'int64',
-    })
-    nSubTimeframes: number;
+    @Column({ name: 'n_timeframes' })
+    nTimeframes: number;
 
-    @Column({
-        name: 'equipment_bytes',
-        nullable: true
-    })
-    @ApiModelProperty({
-        type: 'integer',
-        format: 'int64',
-    })
-    equipmentBytes: number;
-
-    @Column({
-        name: 'recording_bytes',
-        nullable: true
-    })
-    @ApiModelProperty({
-        type: 'integer',
-        format: 'int64',
-    })
-    recordingBytes: number;
-
-    @Column({
-        name: 'fair_mq_bytes',
-        nullable: true
-    })
-    @ApiModelProperty({
-        type: 'integer',
-        format: 'int64',
-    })
-    fairMQBytes: number;
-
-    // Maybe there is use for it later.
-    // @Column({ name: 'bytes_processed' })
-    // bytesProcessed: number;
+    @Column({ name: 'bytes_processed' })
+    bytesProcessed: number;
 }

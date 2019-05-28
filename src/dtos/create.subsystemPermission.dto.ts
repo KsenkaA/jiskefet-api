@@ -12,15 +12,16 @@
 
 import { ApiModelProperty } from '@nestjs/swagger';
 import { IsString, IsBoolean } from 'class-validator';
+import { User } from '../entities/user.entity';
 import { SubSystem } from '../entities/sub_system.entity';
 
 export class CreateSubSystemPermissionDto {
 
     @ApiModelProperty({
-        type: 'integer',
-        format: 'int64',
+        example: 8,
+        description: 'Id of the user.',
     })
-    user: number;
+    user: User;
 
     @ApiModelProperty({
         example: 8,
@@ -55,4 +56,8 @@ export class CreateSubSystemPermissionDto {
     })
     @IsString()
     subSystemTokenDescription: string;
+
+    constructor(data: CreateSubSystemPermissionDto | {} = {}) {
+        Object.assign(this, data);
+    }
 }

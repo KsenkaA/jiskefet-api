@@ -13,43 +13,57 @@
 import { ApiModelProperty } from '@nestjs/swagger';
 import { IsInt, IsString, IsEnum, IsDateString, IsNumber } from 'class-validator';
 import { RunType } from '../enums/run.runtype.enum';
-
+import { RunQuality } from '../enums/run.runquality.enum';
 export class CreateRunDto {
 
     @ApiModelProperty({
-        example: 1,
-        description: 'The id of the run',
-        type: 'integer',
-        format: 'int64',
+        example: 1234,
+        description: 'The id of the run'
     })
     @IsNumber()
     runNumber: number;
 
     @ApiModelProperty({
         example: new Date(),
-        description: 'Current Date',
-        type: 'string',
-        format: 'date-time',
+        description: 'Current Date'
     })
     @IsDateString()
-    O2StartTime: Date;
+    timeO2Start: Date;
 
     @ApiModelProperty({
         example: new Date(),
-        description: 'Current Date',
-        type: 'string',
-        format: 'date-time',
+        description: 'Current Date'
     })
     @IsDateString()
-    TrgStartTime: Date;
+    timeTrgStart: Date;
 
     @ApiModelProperty({
-        example: 'COSMICS',
-        description: 'What kind of run.',
-        enum: ['PHYSICS' , 'COSMICS' , 'TECHNICAL'],
+        example: new Date(),
+        description: 'Current Date'
     })
-    @IsEnum(RunType, { each: true, message: 'Each value in subtype must be a valid enum value' })
+    @IsDateString()
+    timeO2End: Date;
+
+    @ApiModelProperty({
+        example: new Date(),
+        description: 'Current Date'
+    })
+    @IsDateString()
+    timeTrgEnd: Date;
+
+    @ApiModelProperty({
+        example: ['test'],
+        description: 'What kind of run.',
+    })
+    @IsEnum(RunType, { each: true })
     readonly runType: string;
+
+    @ApiModelProperty({
+        example: ['test'],
+        description: 'The quality of the run.',
+    })
+    @IsEnum(RunQuality, { each: true })
+    readonly runQuality: string;
 
     @ApiModelProperty({
         example: 'Sl4e12ofb83no92ns',
@@ -61,8 +75,6 @@ export class CreateRunDto {
     @ApiModelProperty({
         example: 16,
         description: 'Number of detectors during run.',
-        type: 'integer',
-        format: 'int64',
     })
     @IsInt()
     readonly nDetectors: number;
@@ -70,8 +82,6 @@ export class CreateRunDto {
     @ApiModelProperty({
         example: 7,
         description: 'Number of FLPs that computed data',
-        type: 'integer',
-        format: 'int64',
     })
     @IsInt()
     readonly nFlps: number;
@@ -79,9 +89,39 @@ export class CreateRunDto {
     @ApiModelProperty({
         example: 8,
         description: 'Number of EPNs that stored data',
-        type: 'integer',
-        format: 'int64',
     })
     @IsInt()
     readonly nEpns: number;
+
+    @ApiModelProperty({
+        example: 2,
+        description: 'Number of timeframes',
+    })
+    @IsInt()
+    readonly nTimeframes: number;
+
+    @ApiModelProperty({
+        example: 4,
+        description: 'Number of subtimeframes',
+    })
+    @IsInt()
+    readonly nSubtimeframes: number;
+
+    @ApiModelProperty({
+        example: 5,
+        description: 'Amount of bytes read out',
+    })
+    @IsInt()
+    readonly bytesReadOut: number;
+
+    @ApiModelProperty({
+        example: 12,
+        description: 'What builder was used.',
+    })
+    @IsInt()
+    readonly bytesTimeframeBuilder: number;
+
+    constructor(data: CreateRunDto | {} = {}) {
+        Object.assign(this, data);
+    }
 }

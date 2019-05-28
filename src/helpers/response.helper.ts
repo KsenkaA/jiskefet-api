@@ -6,18 +6,12 @@
  * copied verbatim in the file "LICENSE"
  */
 
-import {
-    Meta,
-    CollectionSuccessObject,
-    SuccessObject,
-    ErrorObject,
-    InnerError
-} from '../interfaces/response_object.interface';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { ResponseObject, Meta, CollectionResponseObject } from '../interfaces/response_object.interface';
+import { HttpException } from '@nestjs/common';
 
-export const createResponseItem = <T>(item: T, meta?: Meta, additionalData?: any): SuccessObject<T> => {
+export const createResponseItem = <T>(item: T, meta?: Meta, additionalData?: any): ResponseObject<T> => {
     return {
-        apiVersion: (global as any).apiVersion,
+        apiVersion: '0.1.0',
         meta,
         data: {
             ...additionalData,
@@ -27,9 +21,9 @@ export const createResponseItem = <T>(item: T, meta?: Meta, additionalData?: any
 };
 
 export const createResponseItems = <T>(
-    items: any[], meta?: Meta, additionalData?: any): CollectionSuccessObject<T> => {
+    items: any[], meta?: Meta, additionalData?: any): CollectionResponseObject<T> => {
     return {
-        apiVersion: (global as any).apiVersion,
+        apiVersion: '0.1.0',
         meta,
         data: {
             ...additionalData,
@@ -38,44 +32,17 @@ export const createResponseItems = <T>(
     };
 };
 
-export const createErrorResponse = <T>(
-    httpError: HttpException, meta?: Meta, innerError?: InnerError, details?: Array<ErrorObject<T>>): any => {
-    let errorObject;
-    let errorCode;
-    if (typeof httpError.getStatus === 'function') {
-        errorCode = httpError.getStatus();
-    } else {
-        errorCode = HttpStatus.INTERNAL_SERVER_ERROR;
+export const createErrorResponse = <T>(httpError: HttpException, meta?: Meta): ResponseObject<T> => {
+    if (httpError instanceof HttpException) {
+        return {
+            apiVersion: '0.1.0',
+            meta,
+            error: {
+                statusCode: httpError.getStatus(),
+                error: httpError.name,
+                message: httpError.message,
+                stack: httpError.stack
+            },
+        };
     }
-
-    const stackTrace = httpError.stack;
-    switch (process.env.NODE_ENV) {
-        case 'dev':
-            errorObject = {
-                apiVersion: (global as any).apiVersion,
-                meta,
-                error: {
-                    error: httpError ? httpError.name : HttpStatus[HttpStatus.INTERNAL_SERVER_ERROR],
-                    code: errorCode,
-                    message: httpError ? httpError.message : 'Oops, something went wrong',
-                    details: stackTrace,
-                    innerError
-                },
-            };
-            break;
-        default:
-            errorObject = {
-                apiVersion: (global as any).apiVersion,
-                meta,
-                error: {
-                    error: httpError ? httpError.name : HttpStatus[HttpStatus.INTERNAL_SERVER_ERROR],
-                    code: errorCode,
-                    message: httpError ? httpError.message : 'Oops, something went wrong',
-                    details,
-                    innerError
-                },
-            };
-    }
-
-    throw new HttpException(errorObject, errorCode);
 };

@@ -6,19 +6,17 @@
  * copied verbatim in the file "LICENSE"
  */
 
-import { ApiUseTags, ApiBearerAuth, ApiOperation, ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
-import { Get, Controller, Param, UseGuards, UseFilters } from '@nestjs/common';
+import { Get, Controller, Param, UseGuards } from '@nestjs/common';
+import { ApiUseTags, ApiBearerAuth } from '@nestjs/swagger';
 import { SubSystemService } from '../services/subsystem.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ResponseObject } from '../interfaces/response_object.interface';
-import { createResponseItems, createResponseItem, createErrorResponse } from '../helpers/response.helper';
+import { ResponseObject, CollectionResponseObject } from '../interfaces/response_object.interface';
+import { createResponseItems, createResponseItem } from '../helpers/response.helper';
 import { SubSystem } from '../entities/sub_system.entity';
-import { HttpExceptionFilter } from '../filters/httpexception.filter';
 
 @ApiUseTags('subsystems')
 @ApiBearerAuth()
 @UseGuards(AuthGuard())
-@UseFilters(new HttpExceptionFilter())
 @Controller('subsystems')
 export class SubSystemController {
     constructor(
@@ -28,16 +26,9 @@ export class SubSystemController {
      * Get all subsystem
      */
     @Get()
-    @ApiOperation({ title: 'Returns all Subsystems.' })
-    @ApiOkResponse({ description: 'Succesfully returned Subsystems.' })
-    @ApiNotFoundResponse({ description: 'No Subsystems found.' })
-    async findAll(): Promise<ResponseObject<SubSystem>> {
-        try {
-            const getSubsystems = await this.subSystemService.findAll();
-            return createResponseItems(getSubsystems);
-        } catch (error) {
-            return createErrorResponse(error);
-        }
+    async findAll(): Promise<CollectionResponseObject<SubSystem>> {
+        const getSubsystems = await this.subSystemService.findAll();
+        return createResponseItems(getSubsystems);
     }
 
     /**
@@ -45,15 +36,8 @@ export class SubSystemController {
      * @param subSystemId number
      */
     @Get(':id')
-    @ApiOperation({ title: 'Returns a specific Subsystem.' })
-    @ApiOkResponse({ description: 'Succesfully returned a Subsystem with given ID.' })
-    @ApiNotFoundResponse({ description: 'There is no Subsystem with the given ID.' })
     async findById(@Param('id') subSystemId: number): Promise<ResponseObject<SubSystem>> {
-        try {
-            const getSubsystemById = await this.subSystemService.findSubSystemById(subSystemId);
-            return createResponseItem(getSubsystemById);
-        } catch (error) {
-            return createErrorResponse(error);
-        }
+        const getSubsystemById = await this.subSystemService.findSubSystemById(subSystemId);
+        return createResponseItem(getSubsystemById);
     }
 }

@@ -8,7 +8,7 @@
 
 import { Entity } from 'typeorm';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { IsEnum, IsString, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import { IsEnum, IsString, IsOptional, IsNumberString } from 'class-validator';
 import { SubType } from '../enums/log.subtype.enum';
 import { Origin } from '../enums/log.origin.enum';
 import { OrderDirection } from '../enums/orderDirection.enum';
@@ -43,35 +43,29 @@ export class QueryLogDto {
 
     @ApiModelProperty({
         description: 'The maximum amount of logs in each result.',
-        default: 25,
+        default: '25',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
-    @IsNumber()
+    @IsNumberString()
     @IsOptional()
-    pageSize?: number;
+    pageSize?: string;
 
     @ApiModelProperty({
         description: 'The current page, i.e. the offset in the result set based on pageSize.',
-        default: 1,
+        default: '1',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
-    @IsNumber()
+    @IsNumberString()
     @IsOptional()
-    pageNumber?: number;
+    pageNumber?: string;
 
     @ApiModelProperty({
         description: 'The id of the log.',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
-    @IsNumber()
+    @IsNumberString()
     @IsOptional()
-    logId?: number;
+    logId?: string;
 
     @ApiModelProperty({
         description: 'Search for a term that exists in the title field of a log.',
@@ -102,29 +96,23 @@ export class QueryLogDto {
     @ApiModelProperty({
         description: 'The lower bound of the creation time filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
     // Todo: does not work properly yet, %3A instead of :, perhaps.
-    @IsDateString()
+    // @IsDateString()
     @IsOptional()
-    startCreationTime?: Date;
+    startCreationTime?: string;
 
     @ApiModelProperty({
         description: 'The upper bound of the creation time filter range.',
         required: false,
-        type: 'string',
-        format: 'date-time',
     })
-    @IsDateString()
+    // @IsDateString()
     @IsOptional()
-    endCreationTime?: Date;
+    endCreationTime?: string;
 
     @ApiModelProperty({
         description: 'The author of the log..',
         required: false,
-        type: 'integer',
-        format: 'int64',
     })
     user?: User;
 }
