@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Download CSV</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body style="padding: 80px">
+<div class="row justify-content-center">
+    <div class="col" style="text-align: center">
+        <h1>CSV download page</h1><br>
+        <p>You can choose table and columns by yourself or use a template.</p>
+    </div>
+</div>
+<div class="row justify-content-center" style="padding-top: 8%">
+    <div class="col-4" >
+        <h3>Manual setting</h3><br><br>
+        <form>
+            <div class="form-group">
+                <label for="table_name">Which table?</label>
+                <select class="form-control" id="table_name">
+                    <option>Log</option>
+                    <option>Run</option>
+                    <option>User</option>
+                    <option>SubSystem</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="columns">Which columns?</label>
+                <input class="form-control" id="columns" placeholder="Example: id,text,origin" required>
+            </div><br>
+            <button type="submit" class="btn btn-primary" id="manual_button" onclick="manual_download()">Download</button>
+        </form>
+    </div>
+    <div class="col-1"></div>
+    <div class="col-4">
+        <h3>Use a template</h3><br><br>
+        <form>
+            <div class="form-group">
+                <label for="template">Which template?</label>
+                <select class="form-control" id="template" disabled>
+                    <option>No templates available</option>
+                </select>
+            </div><br>
+            <button type="submit" class="btn btn-primary" id="template_button" onclick="template_download()" disabled>Download</button>
+        </form>
+    </div>
+</div>
+<script>
+    function manual_download(){
+        let table = document.getElementById("table_name").value;
+        let columns =  document.getElementById("columns").value;
+        if (columns === '') {
+            columns = 'got_no_columns';
+        }
+        window.open('/csv/colDelimiter=;&tableName=' + table + '&columns=' + columns + '/', '_blank');
+    }
+    function template_download() {
+        let template = document.getElementById("template").value;
+        window.open('/csv/templateName=' + template + '/', '_blank');
+    }
+</script>
+</body>
+</html>
